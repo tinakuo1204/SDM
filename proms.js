@@ -1,0 +1,12 @@
+// Parathyroid Precision MDT PROMs — synthetic-data UI preview only.
+const pasItems = ["骨頭疼痛", "容易覺得疲倦", "情緒變化很大", "覺得沮喪或憂鬱", "肚子痛", "覺得很虛弱", "煩躁靜不下來", "關節疼痛", "容易健忘", "從坐的椅子站起來有困難", "頭痛", "皮膚癢", "容易口渴"];
+function renderPROM(){
+ const host=document.getElementById('promFields');
+ host.innerHTML=`<div class="q"><h3>問卷背景（測試）</h3><label>疾病類型</label><select id="promDx"><option value="">請選擇</option><option value="PHPT">原發性副甲狀腺機能亢進（PHPT）</option><option value="SHPT">續發性副甲狀腺機能亢進（SHPT）</option><option value="THPT">三發性副甲狀腺機能亢進（THPT）</option></select><label>追蹤時間點</label><select id="promTime"><option>基準值 T0</option><option>術後 1 個月</option><option>術後 3 個月</option><option>術後 6 個月</option><option>術後 12 個月</option><option>非手術追蹤</option></select></div>
+ <div class="q"><h3>一、SF-36 台灣版</h3><p>已依提供的臺灣版問卷草稿納入完整 36 項填答（11 個題組）；請以正式授權版本進行最終文字與計分驗收。</p><p id="sf36Progress">已填 0 / 36 項（不含正式計分）</p><div id="sf36Rows"></div></div>
+ <div class="q"><h3>二、EQ VAS：今日整體健康自評</h3><p>0＝想像中最差的健康狀況；100＝想像中最好的健康狀況</p><input id="eqvas" type="range" min="0" max="100" value="50" oninput="document.getElementById('eqval').textContent=this.value"><strong id="eqval">50</strong> / 100</div>
+ <div class="q"><h3>三、PAS-Q：副甲狀腺症狀評估</h3><p>0＝無此症狀；100＝症狀最嚴重。依原稿提供 0、10、…、100 選項。</p><div id="pasRows"></div><p id="pasPreview"></p></div>
+ <div class="q"><h3>四、病人回饋</h3><label>對問卷的改善建議</label><textarea id="promFeedback"></textarea><label>推薦親友至本中心接受副甲狀腺疾病相關治療的可能性（0–10）</label><input type="range" min="0" max="10" value="5" id="recommend" oninput="document.getElementById('recommendVal').textContent=this.value"><strong id="recommendVal">5</strong> / 10</div><p class="note">測試預覽不含個人識別欄位，無提交、無儲存、無醫療判斷。</p>`;
+ renderSF36();document.getElementById('pasRows').innerHTML=pasItems.map((name,i)=>`<div class="q"><label>${i+1}. ${name}</label><select data-pas="${i}" onchange="updatePAS()"><option value="">未填</option>${Array.from({length:11},(_,j)=>`<option value="${j*10}">${j*10}</option>`).join('')}</select></div>`).join('');updatePAS();
+}
+function updatePAS(){const values=[...document.querySelectorAll('[data-pas]')].map(el=>el.value).filter(v=>v!=='').map(Number);document.getElementById('pasPreview').textContent=`已填 ${values.length}/13 項；測試平均症狀分數：${values.length?(values.reduce((a,b)=>a+b,0)/values.length).toFixed(1):'—'}（非正式 PAS-Q 計分）`;}
